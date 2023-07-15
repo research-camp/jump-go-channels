@@ -2,6 +2,7 @@ package internal
 
 import (
 	"container/list"
+	"log"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -26,12 +27,14 @@ func (c *BufferedChannel) Close() {
 
 func (c *BufferedChannel) Next() bool {
 	defer c.lock.Unlock()
+
 	for {
 		c.lock.Lock()
 
 		if c.closed && c.buf.IsEmpty() {
 			return false
 		}
+
 		if !c.buf.IsEmpty() {
 			return true
 		}
@@ -50,11 +53,15 @@ func (c *BufferedChannel) Send(val interface{}) {
 	defer c.lock.Unlock()
 
 	if !c.buf.IsFull() {
-		c.buf.Enqueue(val)
+		if err := c.buf.Enqueue(val); err != nil {
+			log.Fatal(err)
+		}
+
 		return
 	}
 
 	ticket := atomic.AddInt32(&c.sendCounter, 1)
+
 	c.sendQ.PushBack(ticket)
 
 	c.lock.Unlock()
@@ -71,7 +78,10 @@ func (c *BufferedChannel) Send(val interface{}) {
 	}
 
 	c.sendQ.Remove(c.sendQ.Front())
-	c.buf.Enqueue(val)
+
+	if err := c.buf.Enqueue(val); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func (c *BufferedChannel) Recv() (interface{}, bool) {
@@ -87,6 +97,7 @@ func (c *BufferedChannel) Recv() (interface{}, bool) {
 	}
 
 	ticket := atomic.AddInt32(&c.recvCounter, 1)
+
 	c.recvQ.PushBack(ticket)
 
 	c.lock.Unlock()
@@ -107,5 +118,6 @@ func (c *BufferedChannel) Recv() (interface{}, bool) {
 	}
 
 	c.recvQ.Remove(c.recvQ.Front())
+
 	return c.buf.Dequeue(), true
 }
