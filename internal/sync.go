@@ -61,6 +61,8 @@ func (c *SyncChan) Send(val interface{}) {
 
 	c.sendQ.PushBack(ticket)
 
+	// todo: scheduling goes here
+
 	c.lock.Unlock()
 
 	for {
