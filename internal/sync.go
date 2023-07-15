@@ -26,12 +26,14 @@ func (c *SyncChan) Close() {
 
 func (c *SyncChan) Next() bool {
 	defer c.lock.Unlock()
+
 	for {
 		c.lock.Lock()
 
 		if c.closed && c.val == nil {
 			return false
 		}
+
 		if c.val != nil {
 			return true
 		}
@@ -51,10 +53,12 @@ func (c *SyncChan) Send(val interface{}) {
 
 	if c.val == nil {
 		c.val = &val
+
 		return
 	}
 
 	ticket := atomic.AddInt32(&c.sendCounter, 1)
+
 	c.sendQ.PushBack(ticket)
 
 	c.lock.Unlock()
@@ -71,6 +75,7 @@ func (c *SyncChan) Send(val interface{}) {
 	}
 
 	c.sendQ.Remove(c.sendQ.Front())
+
 	c.val = &val
 }
 
@@ -90,6 +95,7 @@ func (c *SyncChan) Recv() (interface{}, bool) {
 	}
 
 	ticket := atomic.AddInt32(&c.recvCounter, 1)
+
 	c.recvQ.PushBack(ticket)
 
 	c.lock.Unlock()
