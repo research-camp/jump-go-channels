@@ -1,5 +1,7 @@
 package internal
 
+import "container/list"
+
 // Channel interface, we show channel operations as an interface
 type Channel interface {
 	Send(interface{})
@@ -27,3 +29,26 @@ func WithBuffer(b Buffer) Option {
 }
 
 type Option func(o *options)
+
+func NewChannel(size int, opts ...Option) Channel {
+	o := &options{
+		buffer: newListBuffer(size),
+	}
+
+	for _, f := range opts {
+		f(o)
+	}
+
+	if size > 0 {
+		return &BufferedChannel{
+			buf:   o.buffer,
+			sendQ: new(list.List).Init(),
+			recvQ: new(list.List).Init(),
+		}
+	}
+
+	return &SyncChan{
+		sendQ: new(list.List).Init(),
+		recvQ: new(list.List).Init(),
+	}
+}
