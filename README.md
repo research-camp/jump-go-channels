@@ -1,6 +1,52 @@
-# GO Channels Scheduling
+# GO Buffered Channels Scheduling
 
-How do Queue Channels work in ```Golang```? In this paper we are going to talk about
-```Golang``` Channels and how are they implemented, and how we can use them as Queue Channels.
-In the next steps we are going to change the queue algorithem in order to make priority queue
-or other scheduling algorithms in ```Golang``` Channels.
+![](https://img.shields.io/badge/language-go-1102CA)
+![](https://img.shields.io/badge/topic-scheduling-DD5511)
+![](https://img.shields.io/badge/version-v0.1-AA5533)
+
+Implementing scheduling for Golang buffered channels in order
+to send important data sooner. For scheduling we used
+[pyramid](https://github.com/amirhnajafiz/pyramid) which is a heap
+data structure.
+
+## Example
+
+As you can see, I created a buffered channel with capacity of 2. Then we send
+data with order of low priority to high. But in consuming, it will get the high
+priority first and low priority later.
+
+```go
+// buffered channel
+ch := internal.NewChannel(2, true)
+wg := sync.WaitGroup{}
+
+wg.Add(2)
+
+ch.Send(Data{
+    Value: "low value",
+    p:     1,
+})
+ch.Send(Data{
+    Value: "high value",
+    p:     2,
+})
+
+// create a go routine
+go func() {
+    for ch.Next() {
+        msg, _ := ch.Recv()
+
+        log.Println(msg.(Data).Value)
+
+        wg.Done()
+    }
+}()
+
+wg.Wait()
+ch.Close()
+```
+
+```shell
+2023/07/16 09:47:02 high value
+2023/07/16 09:47:02 low value
+```
