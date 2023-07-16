@@ -1,4 +1,4 @@
-# GO Buffered Channels Scheduling
+# Golang Buffered Channels Scheduling
 
 ![](https://img.shields.io/badge/language-go-1102CA)
 ![](https://img.shields.io/badge/topic-scheduling-DD5511)
@@ -10,6 +10,56 @@ Since unbuffered channels don’t have buffer and they work by ```ticket/token``
 topology we cannot set scheduling algorithms on them. But for scheduling buffered channels
 we used [pyramid](https://github.com/amirhnajafiz/pyramid) which is a heap
 data structure in Golang.
+
+## Interface
+
+Just like Golang channels, we created an interface in order to simulate the channel behaviour.
+The interface goes like this:
+
+```go
+type Channel interface {
+    Send(interface{})
+    Recv() (interface{}, bool)
+    Close()
+    Next() bool
+}
+```
+
+### create channel
+
+In order to create channel, you can set size for it. If the size is zero then it would create an
+unbuffered channel. Otherwise it would create a buffered channel.
+
+```go
+// buffered channel
+ch := internal.NewChannel(2, false)
+
+// unbuffered channel
+uch := internal.NewChannel(0, false)
+```
+
+### scheduling
+
+To make a scheduled channel you need to create a channel with ```true``` input in second argument.
+
+```go
+// buffered channel
+ch := internal.NewChannel(10, true)
+```
+
+Make sure that your input data follows the following interface to have a priority method:
+
+```go
+type (
+	// Schedulable object has a priority method which
+	// return the priority of that object for scheduling.
+	Schedulable interface {
+		Priority() int
+	}
+)
+```
+
+This method is used to sort channel data based on the priority.
 
 ## Example
 
@@ -47,6 +97,8 @@ go func() {
 wg.Wait()
 ch.Close()
 ```
+
+### output
 
 ```shell
 2023/07/16 09:47:02 high value
