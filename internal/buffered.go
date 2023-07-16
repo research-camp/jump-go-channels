@@ -16,7 +16,6 @@ type BufferedChannel struct {
 	recvQ       *list.List
 	sendCounter int32
 	recvCounter int32
-	schedule    bool
 }
 
 func (c *BufferedChannel) Close() {
@@ -64,10 +63,6 @@ func (c *BufferedChannel) Send(val interface{}) {
 	ticket := atomic.AddInt32(&c.sendCounter, 1)
 
 	c.sendQ.PushBack(ticket)
-
-	if c.schedule {
-		c.sendQ = schedule(c.sendQ)
-	}
 
 	c.lock.Unlock()
 

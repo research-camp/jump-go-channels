@@ -3,14 +3,16 @@ package internal
 import "container/list"
 
 type buffer struct {
-	q      *list.List
-	maxLen int
+	q        *list.List
+	maxLen   int
+	schedule bool
 }
 
-func newListBuffer(size int) *buffer {
+func newListBuffer(size int, schedule bool) *buffer {
 	return &buffer{
-		q:      new(list.List).Init(),
-		maxLen: size,
+		q:        new(list.List).Init(),
+		maxLen:   size,
+		schedule: schedule,
 	}
 }
 
@@ -28,6 +30,10 @@ func (c *buffer) Enqueue(val interface{}) error {
 	}
 
 	c.q.PushBack(val)
+
+	if c.schedule {
+		c.q = schedule(c.q)
+	}
 
 	return nil
 }

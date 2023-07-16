@@ -25,10 +25,9 @@ func NewChannel(size int, schedule bool) Channel {
 	// create buffered channel
 	if size > 0 {
 		return &BufferedChannel{
-			buf:      newListBuffer(size),
-			sendQ:    new(list.List).Init(),
-			recvQ:    new(list.List).Init(),
-			schedule: schedule,
+			buf:   newListBuffer(size, schedule),
+			sendQ: new(list.List).Init(),
+			recvQ: new(list.List).Init(),
 		}
 	}
 
