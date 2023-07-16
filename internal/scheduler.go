@@ -4,7 +4,7 @@ import "container/list"
 
 type scheduler struct{}
 
-func (s scheduler) Schedule(queue *list.List) *list.List {
+func (s scheduler) schedule(queue *list.List) *list.List {
 	// creating a new list
 	newQueue := new(list.List).Init()
 
