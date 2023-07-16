@@ -15,7 +15,6 @@ type SyncChan struct {
 	recvQ       *list.List
 	sendCounter int32
 	recvCounter int32
-	schedule    bool
 }
 
 func (c *SyncChan) Close() {
@@ -61,10 +60,6 @@ func (c *SyncChan) Send(val interface{}) {
 	ticket := atomic.AddInt32(&c.sendCounter, 1)
 
 	c.sendQ.PushBack(ticket)
-
-	if c.schedule {
-		c.sendQ = schedule(c.sendQ)
-	}
 
 	c.lock.Unlock()
 
