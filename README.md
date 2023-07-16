@@ -4,10 +4,12 @@
 ![](https://img.shields.io/badge/topic-scheduling-DD5511)
 ![](https://img.shields.io/badge/version-v0.1-AA5533)
 
-Implementing scheduling for Golang buffered channels in order
-to send important data sooner. For scheduling we used
-[pyramid](https://github.com/amirhnajafiz/pyramid) which is a heap
-data structure.
+Implementing scheduling feature for Golang buffered channels.
+The reason for this feature is to send important data sooner.
+Since unbuffered channels don’t have buffer and they work by ```ticket/token```
+topology we cannot set scheduling algorithms on them. But for scheduling buffered channels
+we used [pyramid](https://github.com/amirhnajafiz/pyramid) which is a heap
+data structure in Golang.
 
 ## Example
 
