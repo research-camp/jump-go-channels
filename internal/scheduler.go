@@ -11,7 +11,7 @@ import (
 func schedule(queue *list.List) *list.List {
 	// creating a heap with scheduling interface
 	heap := pyramid.NewHeap[pkg.Schedulable](func(a pkg.Schedulable, b pkg.Schedulable) bool {
-		return a.Priority() < b.Priority()
+		return a.Priority() > b.Priority()
 	})
 
 	// get queue size
@@ -19,7 +19,11 @@ func schedule(queue *list.List) *list.List {
 
 	// scheduling logic in here
 	for i := 0; i < size; i++ {
-		heap.Push(queue.Front())
+		tmp := queue.Front()
+
+		heap.Push(tmp.Value)
+
+		queue.Remove(tmp)
 	}
 
 	// creating a new list
