@@ -1,6 +1,6 @@
 # Golang Buffered Channels Scheduling
 
-![](https://img.shields.io/badge/language-go-1102CA)
+![](https://img.shields.io/badge/language-go-32a89e)
 ![](https://img.shields.io/badge/topic-scheduling-DD5511)
 ![](https://img.shields.io/badge/version-v0.1-AA5533)
 
