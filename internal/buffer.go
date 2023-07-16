@@ -1,14 +1,6 @@
 package internal
 
-import (
-	"container/list"
-	"errors"
-)
-
-var (
-	// ErrQueueFull occurs when the queue is full
-	ErrQueueFull = errors.New("queue is full")
-)
+import "container/list"
 
 type buffer struct {
 	q      *list.List
