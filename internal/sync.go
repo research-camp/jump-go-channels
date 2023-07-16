@@ -15,6 +15,7 @@ type SyncChan struct {
 	recvQ       *list.List
 	sendCounter int32
 	recvCounter int32
+	schedule    bool
 }
 
 func (c *SyncChan) Close() {

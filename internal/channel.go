@@ -21,7 +21,7 @@ type (
 )
 
 // NewChannel builds a new channel for us
-func NewChannel(size int) Channel {
+func NewChannel(size int, schedule bool) Channel {
 	// create buffered channel
 	if size > 0 {
 		return &BufferedChannel{
