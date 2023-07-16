@@ -35,9 +35,6 @@ func (c *buffer) Enqueue(val interface{}) error {
 		return ErrQueueFull
 	}
 
-	// todo: scheduling in here
-	// todo: make a compare function in value interface
-
 	c.q.PushBack(val)
 
 	return nil
