@@ -23,17 +23,7 @@ func main() {
 
 	wg.Add(2)
 
-	// create 2 go routines
-	go func() {
-		for {
-			log.Println("waiting ...")
-			msg, _ := ch.Recv()
-
-			log.Println(msg.(Data).Value)
-
-			wg.Done()
-		}
-	}()
+	// create a go routine
 	go func() {
 		for {
 			log.Println("waiting ...")
