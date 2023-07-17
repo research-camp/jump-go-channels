@@ -72,7 +72,7 @@ func (c *SyncChan) Send(val interface{}) {
 	}
 
 	ticket := atomic.AddInt32(&c.sendCounter, 1)
-	t := token{
+	t := &token{
 		value: ticket,
 		p:     val.(pkg.Schedulable).Priority(),
 	}
@@ -88,7 +88,7 @@ func (c *SyncChan) Send(val interface{}) {
 	for {
 		c.lock.Lock()
 
-		if ticket == c.sendQ.Front().Value.(token).value {
+		if ticket == c.sendQ.Front().Value.(*token).value {
 			break
 		}
 

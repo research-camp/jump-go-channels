@@ -18,10 +18,32 @@ func (d Data) Priority() int {
 
 func main() {
 	// unbuffered channel
-	ch := internal.NewChannel(2, true)
+	ch := internal.NewChannel(0, true)
 	wg := sync.WaitGroup{}
 
 	wg.Add(2)
+
+	// create 2 go routines
+	go func() {
+		for {
+			log.Println("waiting ...")
+			msg, _ := ch.Recv()
+
+			log.Println(msg.(Data).Value)
+
+			wg.Done()
+		}
+	}()
+	go func() {
+		for {
+			log.Println("waiting ...")
+			msg, _ := ch.Recv()
+
+			log.Println(msg.(Data).Value)
+
+			wg.Done()
+		}
+	}()
 
 	ch.Send(Data{
 		Value: "low value",
@@ -31,17 +53,6 @@ func main() {
 		Value: "high value",
 		p:     2,
 	})
-
-	// create a go routine
-	go func() {
-		for ch.Next() {
-			msg, _ := ch.Recv()
-
-			log.Println(msg.(Data).Value)
-
-			wg.Done()
-		}
-	}()
 
 	wg.Wait()
 	ch.Close()
