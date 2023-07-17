@@ -5,16 +5,30 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"github.com/research-camp/go-channels-scheduling/pkg"
 )
 
-type SyncChan struct {
-	val         *interface{}
-	lock        sync.Mutex
-	closed      bool
-	sendQ       *list.List
-	recvQ       *list.List
-	sendCounter int32
-	recvCounter int32
+type (
+	SyncChan struct {
+		val         *interface{}
+		lock        sync.Mutex
+		closed      bool
+		schedule    bool
+		sendQ       *list.List
+		recvQ       *list.List
+		sendCounter int32
+		recvCounter int32
+	}
+
+	token struct {
+		value int32
+		p     int
+	}
+)
+
+func (t *token) Priority() int {
+	return t.p
 }
 
 func (c *SyncChan) Close() {
@@ -58,15 +72,23 @@ func (c *SyncChan) Send(val interface{}) {
 	}
 
 	ticket := atomic.AddInt32(&c.sendCounter, 1)
+	t := token{
+		value: ticket,
+		p:     val.(pkg.Schedulable).Priority(),
+	}
 
-	c.sendQ.PushBack(ticket)
+	c.sendQ.PushBack(t)
+
+	if c.schedule {
+		c.sendQ = schedule(c.sendQ)
+	}
 
 	c.lock.Unlock()
 
 	for {
 		c.lock.Lock()
 
-		if ticket == c.sendQ.Front().Value.(int32) {
+		if ticket == c.sendQ.Front().Value.(token).value {
 			break
 		}
 
