@@ -33,7 +33,8 @@ func NewChannel(size int, schedule bool) Channel {
 
 	// create unbuffered channel
 	return &SyncChan{
-		sendQ: new(list.List).Init(),
-		recvQ: new(list.List).Init(),
+		schedule: schedule,
+		sendQ:    new(list.List).Init(),
+		recvQ:    new(list.List).Init(),
 	}
 }
