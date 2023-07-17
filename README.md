@@ -1,13 +1,12 @@
-# Golang Buffered Channels Scheduling
+# Golang Channels Scheduling
 
 ![](https://img.shields.io/badge/language-go-32a89e)
 ![](https://img.shields.io/badge/topic-scheduling-DD5511)
 ![](https://img.shields.io/badge/version-v0.1-AA5533)
 
-Implementing scheduling feature for Golang buffered channels.
+Implementing scheduling feature for Golang channels.
 The reason for this feature is to send important data sooner.
-Since unbuffered channels don’t have buffer and they work by ```ticket/token```
-topology we cannot set scheduling algorithms on them. But for scheduling buffered channels
+For scheduling buffered and unbuffered channels
 we used [pyramid](https://github.com/amirhnajafiz/pyramid) which is a heap
 data structure in Golang.
 
