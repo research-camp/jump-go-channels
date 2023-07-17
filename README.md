@@ -2,7 +2,7 @@
 
 ![](https://img.shields.io/badge/language-go-32a89e)
 ![](https://img.shields.io/badge/topic-scheduling-DD5511)
-![](https://img.shields.io/badge/version-v0.1-AA5533)
+![](https://img.shields.io/badge/version-v0.2-AA5533)
 
 Implementing scheduling feature for Golang channels.
 The reason for this feature is to send important data sooner.
