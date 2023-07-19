@@ -2,11 +2,10 @@ package internal
 
 import (
 	"container/list"
+	"github.com/research-camp/go-channels-scheduling/pkg"
 	"sync"
 	"sync/atomic"
 	"time"
-
-	"github.com/research-camp/go-channels-scheduling/pkg"
 )
 
 type (
@@ -72,15 +71,18 @@ func (c *SyncChan) Send(val interface{}) {
 	}
 
 	ticket := atomic.AddInt32(&c.sendCounter, 1)
-	t := &token{
-		value: ticket,
-		p:     val.(pkg.Schedulable).Priority(),
-	}
-
-	c.sendQ.PushBack(t)
 
 	if c.schedule {
+		t := &token{
+			value: ticket,
+			p:     val.(pkg.Schedulable).Priority(),
+		}
+
+		c.sendQ.PushBack(t)
+
 		c.sendQ = schedule(c.sendQ)
+	} else {
+		c.sendQ.PushBack(ticket)
 	}
 
 	c.lock.Unlock()
@@ -88,8 +90,14 @@ func (c *SyncChan) Send(val interface{}) {
 	for {
 		c.lock.Lock()
 
-		if ticket == c.sendQ.Front().Value.(*token).value {
-			break
+		if c.schedule {
+			if ticket == c.sendQ.Front().Value.(*token).value {
+				break
+			}
+		} else {
+			if ticket == c.sendQ.Front().Value {
+				break
+			}
 		}
 
 		c.lock.Unlock()
