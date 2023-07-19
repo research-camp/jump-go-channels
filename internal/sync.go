@@ -91,11 +91,11 @@ func (c *SyncChan) Send(val interface{}) {
 		c.lock.Lock()
 
 		if c.schedule {
-			if ticket == c.sendQ.Front().Value.(*token).value {
+			if c.val == nil && ticket == c.sendQ.Front().Value.(*token).value {
 				break
 			}
 		} else {
-			if ticket == c.sendQ.Front().Value {
+			if c.val == nil && ticket == c.sendQ.Front().Value {
 				break
 			}
 		}
