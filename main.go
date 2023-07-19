@@ -18,7 +18,7 @@ func (d Data) Priority() int {
 
 func main() {
 	// unbuffered channel
-	ch := internal.NewChannel(0, true)
+	ch := internal.NewChannel(0, false)
 	wg := sync.WaitGroup{}
 
 	wg.Add(4)
