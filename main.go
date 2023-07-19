@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/research-camp/go-channels-scheduling/internal"
 	"log"
 	"sync"
-	"time"
+
+	"github.com/research-camp/go-channels-scheduling/internal"
 )
 
 type Data struct {
@@ -18,15 +18,11 @@ func (d Data) Priority() int {
 
 func main() {
 	// unbuffered channel
-	ch := internal.NewChannel(0, false)
+	ch := internal.NewChannel(0, true)
 	wg := sync.WaitGroup{}
 
 	wg.Add(4)
 
-	ch.Send(Data{
-		Value: "low value",
-		p:     1,
-	})
 	ch.Send(Data{
 		Value: "mid value",
 		p:     2,
@@ -36,6 +32,10 @@ func main() {
 		p:     3,
 	})
 	ch.Send(Data{
+		Value: "low value",
+		p:     1,
+	})
+	ch.Send(Data{
 		Value: "very high value",
 		p:     4,
 	})
@@ -43,12 +43,9 @@ func main() {
 	// create a go routine
 	go func() {
 		for ch.Next() {
-			log.Println("waiting ...")
 			msg, _ := ch.Recv()
 
 			log.Println(msg.(Data).Value)
-
-			time.Sleep(1 * time.Second)
 
 			wg.Done()
 		}
