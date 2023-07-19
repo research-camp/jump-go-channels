@@ -60,35 +60,37 @@ func (c *SyncChan) Send(val interface{}) {
 		panic("channel is closed")
 	}
 
-	c.lock.Lock()
-	defer c.lock.Unlock()
-
-	if c.val == nil {
-		c.val = &val
-
-		return
-	}
-
-	ticket := atomic.AddInt32(&c.sendCounter, 1)
-
-	c.sendQ.PushBack(ticket)
-
-	c.lock.Unlock()
-
-	for {
+	go func() {
 		c.lock.Lock()
+		defer c.lock.Unlock()
 
-		if c.val == nil && ticket == c.sendQ.Front().Value {
-			break
+		if c.val == nil {
+			c.val = &val
+
+			return
 		}
 
+		ticket := atomic.AddInt32(&c.sendCounter, 1)
+
+		c.sendQ.PushBack(ticket)
+
 		c.lock.Unlock()
-		time.Sleep(10 * time.Millisecond)
-	}
 
-	c.sendQ.Remove(c.sendQ.Front())
+		for {
+			c.lock.Lock()
 
-	c.val = &val
+			if c.val == nil && ticket == c.sendQ.Front().Value {
+				break
+			}
+
+			c.lock.Unlock()
+			time.Sleep(10 * time.Millisecond)
+		}
+
+		c.sendQ.Remove(c.sendQ.Front())
+
+		c.val = &val
+	}()
 }
 
 func (c *SyncChan) Recv() (interface{}, bool) {

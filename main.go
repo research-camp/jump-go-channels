@@ -23,20 +23,6 @@ func main() {
 
 	wg.Add(4)
 
-	// create a go routine
-	go func() {
-		for ch.Next() {
-			log.Println("waiting ...")
-			msg, _ := ch.Recv()
-
-			log.Println(msg.(Data).Value)
-
-			time.Sleep(1 * time.Second)
-
-			wg.Done()
-		}
-	}()
-
 	ch.Send(Data{
 		Value: "low value",
 		p:     1,
@@ -53,6 +39,20 @@ func main() {
 		Value: "very high value",
 		p:     4,
 	})
+
+	// create a go routine
+	go func() {
+		for ch.Next() {
+			log.Println("waiting ...")
+			msg, _ := ch.Recv()
+
+			log.Println(msg.(Data).Value)
+
+			time.Sleep(1 * time.Second)
+
+			wg.Done()
+		}
+	}()
 
 	wg.Wait()
 	ch.Close()
