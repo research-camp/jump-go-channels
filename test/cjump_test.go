@@ -1,9 +1,10 @@
 package test
 
 import (
-	"github.com/research-camp/go-channels-scheduling/internal"
 	"sync"
 	"testing"
+
+	"github.com/research-camp/go-channels-scheduling/internal"
 )
 
 func BenchmarkCJump(b *testing.B) {

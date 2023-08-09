@@ -29,7 +29,7 @@ func BenchmarkChannel(b *testing.B) {
 		wg.Add(1)
 
 		ch <- dataMock{
-			Value: i,
+			Value: b.N - i,
 		}
 	}
 
