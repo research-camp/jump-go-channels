@@ -103,3 +103,16 @@ ch.Close()
 2023/07/16 09:47:02 high value
 2023/07/16 09:47:02 low value
 ```
+
+## Benchmark
+
+In order to execute benchmarks, use ```make bench``` command.
+
+```shell
+BenchmarkChannel-8      10111676               120.9 ns/op
+BenchmarkChannel-8      10028256               118.9 ns/op
+BenchmarkCJump-8             100          13387163 ns/op
+BenchmarkCJump-8             100          13141886 ns/op
+PASS
+ok      github.com/research-camp/go-channels-scheduling/test    6.967s
+```
