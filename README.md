@@ -1,11 +1,10 @@
-# Golang Channels Scheduling
+# Jump Golang Channels
 
 ![](https://img.shields.io/badge/language-go-32a89e)
 ![](https://img.shields.io/badge/topic-scheduling-DD5511)
 ![](https://img.shields.io/badge/version-v0.3-AA5533)
 
-Implementing scheduling feature for Golang channels, in order to
-jump low priority tasks.
+Implementing scheduling feature for Golang channels in order to jump over low priority tasks in them.
 The reason for this feature is to send important data sooner.
 For scheduling buffered and unbuffered channels
 we used [pyramid](https://github.com/amirhnajafiz/pyramid) which is a heap
