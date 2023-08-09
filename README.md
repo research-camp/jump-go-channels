@@ -109,10 +109,20 @@ ch.Close()
 In order to execute benchmarks, use ```make bench``` command.
 
 ```shell
+BenchmarkChannel-8       8279013               121.0 ns/op
+BenchmarkChannel-8      10276252               115.6 ns/op
+BenchmarkChannel-8      10379642               115.7 ns/op
+BenchmarkChannel-8      10325314               116.1 ns/op
+BenchmarkChannel-8      10378026               115.6 ns/op
 BenchmarkChannel-8      10111676               120.9 ns/op
 BenchmarkChannel-8      10028256               118.9 ns/op
 BenchmarkCJump-8             100          13387163 ns/op
 BenchmarkCJump-8             100          13141886 ns/op
+BenchmarkCJump-8             100          13122004 ns/op
+BenchmarkCJump-8             100          13126526 ns/op
+BenchmarkCJump-8             100          13286897 ns/op
+BenchmarkCJump-8             100          13156385 ns/op
+BenchmarkCJump-8             100          12833818 ns/op
 PASS
 ok      github.com/research-camp/go-channels-scheduling/test    6.967s
 ```
