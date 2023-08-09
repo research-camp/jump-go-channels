@@ -103,7 +103,7 @@ func (c *SyncChan) Send(val interface{}) {
 			}
 
 			c.lock.Unlock()
-			time.Sleep(10 * time.Millisecond)
+			time.Sleep(1 * time.Millisecond)
 		}
 
 		c.sendQ.Remove(c.sendQ.Front())
