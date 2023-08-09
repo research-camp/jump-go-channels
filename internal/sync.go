@@ -113,45 +113,18 @@ func (c *SyncChan) Send(val interface{}) {
 }
 
 func (c *SyncChan) Recv() (interface{}, bool) {
-	c.lock.Lock()
-	defer c.lock.Unlock()
-
-	if c.val == nil && c.closed {
-		return nil, false
-	}
-
-	if c.val != nil {
-		val := *c.val
-		c.val = nil
-
-		return val, true
-	}
-
-	ticket := atomic.AddInt32(&c.recvCounter, 1)
-
-	c.recvQ.PushBack(ticket)
-
-	c.lock.Unlock()
-
 	for {
-		c.lock.Lock()
-
-		if c.val == nil && c.closed {
+		if c.closed {
 			return nil, false
 		}
 
-		if c.val != nil && ticket == c.recvQ.Front().Value.(int32) {
-			break
+		if c.val != nil {
+			val := *c.val
+			c.val = nil
+
+			return val, true
 		}
 
-		c.lock.Unlock()
-		time.Sleep(10 * time.Millisecond)
+		time.Sleep(100 * time.Nanosecond)
 	}
-
-	val := *c.val
-	c.val = nil
-
-	c.recvQ.Remove(c.recvQ.Front())
-
-	return val, true
 }
