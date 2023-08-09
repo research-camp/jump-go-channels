@@ -2,13 +2,20 @@
 
 ![](https://img.shields.io/badge/language-go-32a89e)
 ![](https://img.shields.io/badge/topic-scheduling-DD5511)
-![](https://img.shields.io/badge/version-v0.2-AA5533)
+![](https://img.shields.io/badge/version-v0.3-AA5533)
 
-Implementing scheduling feature for Golang channels.
+Implementing scheduling feature for Golang channels, in order to
+jump low priority tasks.
 The reason for this feature is to send important data sooner.
 For scheduling buffered and unbuffered channels
 we used [pyramid](https://github.com/amirhnajafiz/pyramid) which is a heap
 data structure in Golang.
+
+- [Interface](#interface)
+  - [create](#create-channel)
+  - [schedule](#scheduling)
+- [Example](#example)
+- [Benchmark](#benchmark)
 
 ## Interface
 
