@@ -116,12 +116,18 @@ func (c *SyncChan) Recv() (interface{}, bool) {
 			return nil, false
 		}
 
+		c.lock.Lock()
+
 		if c.val != nil {
 			val := *c.val
 			c.val = nil
 
+			c.lock.Unlock()
+
 			return val, true
 		}
+
+		c.lock.Unlock()
 
 		time.Sleep(100 * time.Nanosecond)
 	}
