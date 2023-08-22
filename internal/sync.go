@@ -61,55 +61,53 @@ func (c *SyncChan) Send(val interface{}) {
 		panic("channel is closed")
 	}
 
-	go func() {
-		c.lock.Lock()
-		defer c.lock.Unlock()
+	c.lock.Lock()
+	defer c.lock.Unlock()
 
-		if c.val == nil {
-			c.val = &val
+	if c.val == nil {
+		c.val = &val
 
-			return
+		return
+	}
+
+	ticket := atomic.AddInt32(&c.sendCounter, 1)
+
+	if c.schedule {
+		tmp := token{
+			value: ticket,
+			p:     val.(pkg.Schedulable).Priority(),
 		}
 
-		ticket := atomic.AddInt32(&c.sendCounter, 1)
+		c.sendQ.PushBack(tmp)
 
-		if c.schedule {
-			tmp := token{
-				value: ticket,
-				p:     val.(pkg.Schedulable).Priority(),
+		c.sendQ = schedule(c.sendQ)
+	} else {
+		c.sendQ.PushBack(ticket)
+	}
+
+	c.lock.Unlock()
+
+	for {
+		c.lock.Lock()
+
+		if c.val == nil {
+			tmp := c.sendQ.Front().Value
+			if c.schedule {
+				tmp = tmp.(token).value
 			}
 
-			c.sendQ.PushBack(tmp)
-
-			c.sendQ = schedule(c.sendQ)
-		} else {
-			c.sendQ.PushBack(ticket)
+			if ticket == tmp {
+				break
+			}
 		}
 
 		c.lock.Unlock()
+		time.Sleep(1 * time.Millisecond)
+	}
 
-		for {
-			c.lock.Lock()
+	c.sendQ.Remove(c.sendQ.Front())
 
-			if c.val == nil {
-				tmp := c.sendQ.Front().Value
-				if c.schedule {
-					tmp = tmp.(token).value
-				}
-
-				if ticket == tmp {
-					break
-				}
-			}
-
-			c.lock.Unlock()
-			time.Sleep(1 * time.Millisecond)
-		}
-
-		c.sendQ.Remove(c.sendQ.Front())
-
-		c.val = &val
-	}()
+	c.val = &val
 }
 
 func (c *SyncChan) Recv() (interface{}, bool) {
