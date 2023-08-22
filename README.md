@@ -110,6 +110,10 @@ ch.Close()
 2023/07/16 09:47:02 low value
 ```
 
+### diagram
+
+![diagram](.github/schema.svg)
+
 ## Benchmark
 
 In order to execute benchmarks, use ```make bench``` command.
